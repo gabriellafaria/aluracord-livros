@@ -1,9 +1,10 @@
-import { Box, Text, TextField, Image, Button } from '@skynexui/components';
+import { Box, Text, TextField, Image, Button, Icon } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
 import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js'
 import { ButtonSendSticker } from '../scr/components/ButtonSendSticker';
+import { Bars } from 'react-loading-icons'
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzUwNDY0MCwiZXhwIjoxOTU5MDgwNjQwfQ.lw41Dzu3FBXIWc9lvolT6JHBibgotuvNg2AxizuoIjQ';
 const SUPABASE_URL = 'https://yaxeuxffirwfuztluzzd.supabase.co';
@@ -15,6 +16,9 @@ function escutaMensagensEmTempoReal(adicionaMensagem) {
         .on('INSERT', (respostaLive) => {
             adicionaMensagem(respostaLive.new);
         })
+        .on('DELETE', (responsaLive) =>{
+            adicionaMensagem(respostaLive.old.id)
+        })
         .subscribe();
 }
 
@@ -22,6 +26,7 @@ export default function ChatPage() {
     const roteamento = useRouter();
     const usuarioLogado = roteamento.query.username;
     const [mensagem, setMensagem] = React.useState('');
+    const [loading, setLoading] = React.useState(true);
     const [listaDeMensagens, setListaDeMensagens] = React.useState([
         /* {
             id: 1,
@@ -44,6 +49,9 @@ export default function ChatPage() {
                 //console.log('Dados da consulta:', data);
                 setListaDeMensagens(data);
             });
+        setLoading(false);
+
+
         const subscription = escutaMensagensEmTempoReal((novaMensagem) => {
             console.log('Nova mensagem:', novaMensagem);
             console.log('listaDeMensagens:', listaDeMensagens);
@@ -139,14 +147,25 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-                    <MessageList mensagens={listaDeMensagens} />
-                    {/* {listaDeMensagens.map((mensagemAtual) => {
-                        return (
-                            <li key={mensagemAtual.id}>
-                                {mensagemAtual.de}: {mensagemAtual.texto}
-                            </li>
-                        )
-                    })} */}
+                    {loading ? (
+                        <Box
+                            styleSheet={{
+                                position: "relative",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                height: "100%",
+                            }}
+                        >
+                            <Bars
+                                fill={appConfig.theme.colors.primary["900"]}
+                                height="16px"
+                            />
+                        </Box>
+                    ) : (
+                        <MessageList mensagens={listaDeMensagens} setMensagens={setListaDeMensagens} />
+                    )}
+
                     <Box
                         as="form"
                         styleSheet={{
@@ -231,7 +250,8 @@ function Header() {
 }
 
 function MessageList(props) {
-    //console.log(props);
+    
+
     return (
         <Box
             tag="ul"
@@ -284,8 +304,31 @@ function MessageList(props) {
                                 }}
                                 tag="span"
                             >
-                                {(new Date().toLocaleDateString())}
+                                {new Date(mensagem.created_at).toLocaleString("pt-BR", {
+                                    dateStyle: "short",
+                                    timeStyle: "short",
+                                })}
                             </Text>
+                            {/* <Icon
+                                styleSheet={{
+                                    width: "15px",
+                                    height: "15px",
+                                    marginLeft: "95%",
+                                    borderRadius: "50%",
+                                    display: "inline-block",
+                                    marginRight: "8px",
+                                    cursor: "pointer",
+                                    hover: {
+                                        backgroundColor: appConfig.theme.colors.neutrals[700],
+                                    },
+                                }}
+                                onClick={() => {
+                                    handleRemove(mensagem.id);
+                                }}
+                                name="FaTrashAlt"
+                              variant="tertiary"
+                             
+                            /> */}
                         </Box>
                         {/* [Declarativo] */}
                         {/* Condicional: {mensagem.texto.startsWith(':sticker:').toString()} */}
