@@ -75,7 +75,7 @@ export default function Error() {
                 fontSize: {
                   xs: "24px",
                   md: "34px",
-                  lg: "68px",
+                  lg: "50px",
                 },
                 color: appConfig.theme.colors.neutrals["000"],
               }}

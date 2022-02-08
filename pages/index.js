@@ -19,21 +19,8 @@ function Titulo(props) {
     );
 }
 
-// Componente React
-// function HomePage() {
-//     // JSX
-//     return (
-//         <div>
-//             <GlobalStyle />
-//             <Titulo tag="h2">Boas vindas de volta!</Titulo>
-//             <h2>Discord - Alura Matrix</h2>
-//         </div>
-//     )
-// }
-// export default HomePage
 
 export default function PaginaInicial() {
-    //const username = 'gabriellafaria';
     const [username, setUsername] = React.useState('');
     const roteamento = useRouter();
 
@@ -81,18 +68,6 @@ export default function PaginaInicial() {
                         <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
                             {appConfig.name}
                         </Text>
-                        {/* <input
-                            type="text"
-                            value={username}
-                            onChange={function (event) {
-                                console.log('usuario digitou', event.target.value);
-                                // Onde ta o valor?
-                                const valor = event.target.value;
-                                // Trocar o valor da variavel
-                                // através do React e avise quem precisa
-                                setUsername(valor);
-                            }}
-                        /> */}
                         <TextField
                             value={username}
                             onChange={function (event) {
